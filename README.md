@@ -1,135 +1,230 @@
-# PersonalOS
+# Upasana Personal OS
 
-[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-orange)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![X](https://img.shields.io/badge/X-@__amankhan-blue?logo=x&logoColor=white)](https://x.com/_amankhan)
-[![Star this repo](https://img.shields.io/github/stars/amanaiproduct/personal-os?style=social)](https://github.com/amanaiproduct/personal-os)
+[License](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-Your AI-powered task management system that keeps you focused on what matters.
+My AI-assisted task system: goals, backlog, schedule, and prioritized tasks—all in markdown your agent can read and act on.
 
-Brain dump into `BACKLOG.md`, tell your AI assistant to process it, and get organized tasks automatically prioritized based on your goals.
+Dump notes into `BACKLOG.md`, process them into `Tasks/`, and use natural-language prompts for quick focus, time-blocked daily plans, and weekly check-ins. Personal data (`Tasks/`, most of `Knowledge/`, `BACKLOG.md`, `GOALS.md`, `schedule.md`) stays local and gitignored—see [.gitignore](.gitignore).
 
-| Section | Status |
-|---------|--------|
-| Task Management | ✅ |
-| Goal-driven Prioritization | ✅ |
-| Knowledge Base | ✅ |
-| Backlog Processing | ✅ |
-| Session Evals | ✅ |
-| MCP Server (optional) | ✅ |
+**Based on** [PersonalOS](https://github.com/amanaiproduct/personal-os) by Aman Khan. This fork adds daily planning, schedule-aware scheduling, and custom Knowledge playbooks while keeping the upstream `core/` reusable layer.
+
+
+| Section                      | Status |
+| ---------------------------- | ------ |
+| Task Management              | Yes    |
+| Goal-driven Prioritization   | Yes    |
+| Knowledge Base               | Yes    |
+| Backlog Processing           | Yes    |
+| Daily Planning (time blocks) | Yes    |
+| Help Menu (7 prompts)        | Yes    |
+| Schedule-aware Planning      | Yes    |
+| Session Evals                | Yes    |
+| Integrations (optional)      | Yes    |
+| MCP Server (optional)        | Yes    |
+
 
 ---
-
-*Quick links:* [Quick Start](#quick-start) · [How It Works](#how-it-works) · [Directory Structure](#directory-structure) · [Daily Workflow](#daily-workflow)
-
----
-
-<img width="1071" height="677" alt="Screenshot 2025-12-26 at 11 51 27 PM" src="https://github.com/user-attachments/assets/bbde8dc5-7e17-4ced-bc2b-ede505ee4a72" />
-
 
 ## Quick Start
 
-### 1. Clone the Repository
+### 1. Clone and enter the repo
+
 ```bash
-git clone https://github.com/amanaiproduct/personal-os.git
-cd personal-os
+git clone <your-fork-url> upasana-personal-os
+cd upasana-personal-os
 ```
 
-### 2. Run Setup (2 minutes)
+### 2. Run setup (~2 minutes)
+
 ```bash
 ./setup.sh
 ```
 
-The setup will:
-- Create your workspace directories
-- Guide you through questions about your goals and priorities
-- Generate your personalized GOALS.md
-- Copy template files
+Setup will:
 
-**Note:** Python 3.10+ is only needed if you want to run the MCP server. The basic setup works with just bash.
+- Create `Tasks/` and `Knowledge/`
+- Copy templates (`AGENTS.md`, `.gitignore`, `BACKLOG.md`) if missing
+- Ask about your role, vision, and priorities
+- Generate your personal `GOALS.md`
+- Optionally install the [amans-skills](https://github.com/amanaiproduct/amans-skills) pack
 
-### 3. Start Using It
+**Agent-guided setup:** You can also skip bash and have your AI walk through setup interactively—the instructions at the top of [setup.sh](setup.sh) describe the same steps (directories, five questions, `GOALS.md`).
+
+**Note:** Python 3.10+ is only required for the optional MCP server. Markdown-only usage works without Python.
+
+### 3. Add your schedule
+
+```bash
+cp schedule.example.md schedule.md
+# Edit weekly hours, overrides, and planning notes
 ```
-# In your AI assistant (Claude Code, etc.)
-"Read AGENTS.md and help me get organized"
+
+`schedule.md` is gitignored. Your agent uses it for time-blocked plans and replans.
+
+### 4. Start talking to your agent
+
 ```
+Read AGENTS.md and help me get organized
+```
+
+Or type `menu` to see numbered workflows without running one yet.
+
+---
 
 ## How It Works
 
-1. **Brain dump** - Drop notes into `BACKLOG.md` (no structure needed)
-2. **Process** - Say "process my backlog" to your AI
-3. **Get organized** - AI creates prioritized tasks based on your GOALS.md
-4. **Stay focused** - Ask "what should I work on today?" for smart suggestions
+1. **Brain dump** — Drop notes into `BACKLOG.md` (no structure needed).
+2. **Process** — Say `Process my backlog` to turn notes into tasks in `Tasks/`.
+3. **Prioritize** — Tasks align with `GOALS.md` (P0–P3, categories, status).
+4. **Focus** — Say `What should I work on today?` for up to three focus tasks (quick focus).
+5. **Plan** — With `schedule.md` configured, say `Plan my day` for a time-blocked plan.
 
-### Common Commands
+Reference material lives in `Knowledge/` and links from task frontmatter via `resource_refs`.
 
-- `"menu"` or `"help"` - Show numbered list of prompts (nothing runs until you pick)
-- `"Process my backlog"` - Turn notes into tasks
-- `"What should I work on today?"` - Get AI suggestions (quick focus)
-- `"Show me my P0 tasks"` - See urgent items
-- `"Mark [task] as done"` - Complete work
+---
+
+## Help Menu
+
+Say `**menu`**, `**help**`, or `**what can you do?**` (standalone) to list workflows—nothing runs until you pick a number or phrase.
+
+
+| #   | Say this                         | What you get                       |
+| --- | -------------------------------- | ---------------------------------- |
+| 1   | `What should I work on today?`   | Up to 3 focus tasks (quick focus)  |
+| 2   | `Plan my day`                    | Time-blocked day plan              |
+| 3   | `Process my backlog`             | Triage `BACKLOG.md` into tasks     |
+| 4   | `What's next today?`             | Next batch after finishing a block |
+| 5   | `Replan my day — I lost 2 hours` | Adjust remaining hours             |
+| 6   | `Weekly check-in`                | P0/P1 progress vs goals            |
+| 7   | `Show me my P0 and P1 tasks`     | Urgent list only (no full plan)    |
+
+
+Other useful phrases:
+
+- `Mark [task] as done` — Complete work and update task status.
+- `I'm blocked on [task] because [reason]` — Flag blockers.
+
+Full agent behavior is defined in [AGENTS.md](AGENTS.md).
 
 ### Priorities
 
-| Priority | Meaning | Limit |
-|----------|---------|-------|
-| **P0** | Do today | max 3 |
-| **P1** | This week | max 7 |
-| **P2** | Scheduled | - |
-| **P3** | Someday/maybe | - |
+
+| Priority | Meaning       | Suggested limit |
+| -------- | ------------- | --------------- |
+| **P0**   | Do today      | max 3           |
+| **P1**   | This week     | max 7           |
+| **P2**   | Scheduled     | —               |
+| **P3**   | Someday/maybe | —               |
+
+
+---
 
 ## Directory Structure
 
 ```
-personal-os/
-├── core/                    # Reusable system components (public)
-│   ├── evals/              # Session evaluations
-│   ├── mcp/                # MCP server implementation
-│   │   └── server.py       # Core server with deduplication
-│   ├── templates/          # Template files for users
-│   │   ├── AGENTS.md       # Comprehensive AI instruction template
-│   │   ├── config.yaml     # Configuration template
-│   │   └── gitignore       # Gitignore template
-│   └── README.md           # Core system documentation
-│
-├── Tasks/                  # Your personal tasks (gitignored)
-├── Knowledge/              # Reference docs & notes (gitignored)
-├── BACKLOG.md             # Your backlog inbox (gitignored)
-├── GOALS.md               # Your personalized goals (generated by setup)
-├── AGENTS.md              # Your AI agent instructions
-└── setup.sh               # Interactive setup script
+upasana-personal-os/
+├── AGENTS.md              # Agent workflows (help menu, planning, backlog)
+├── GOALS.md               # Your goals (gitignored)
+├── schedule.md            # Your hours/exceptions (gitignored)
+├── schedule.example.md    # Schedule template (committed)
+├── BACKLOG.md             # Inbox (gitignored)
+├── Tasks/                 # Task markdown files (gitignored)
+├── Knowledge/             # Reference docs (mostly gitignored)
+├── setup.sh
+├── core/
+│   ├── mcp/server.py      # Optional MCP server
+│   ├── evals/             # Session evaluations
+│   ├── integrations/    # Granola and future integrations
+│   └── templates/
+└── examples/              # Workflows and tutorials
 ```
+
+**Committed in repo:** `AGENTS.md`, `schedule.example.md`, `core/`, `examples/`, templates, and shared Knowledge such as `Knowledge/pm-interview-rubrics/` (this fork tracks interview rubrics there).
+
+**Local only (gitignored):** `GOALS.md`, `schedule.md`, `BACKLOG.md`, `Tasks/*.md`, and most other `Knowledge/*.md` files.
+
+---
 
 ## Daily Workflow
 
-**Morning:** `"Show me today's priorities"` → Pick 1-3 tasks
 
-**During work:** Brain dump into BACKLOG.md, save docs to Knowledge/
+| When                    | Prompt                                                                           |
+| ----------------------- | -------------------------------------------------------------------------------- |
+| **Morning**             | `menu` → 1 or 2, or `What should I work on today?` / `Plan my day`               |
+| **During the day**      | Dump to `BACKLOG.md`; `Process my backlog` when ready                            |
+| **After a focus block** | `What's next today?`                                                             |
+| **Disruption**          | Update Day-of Exceptions in `schedule.md`, then `Replan my day — I lost 2 hours` |
+| **End of week**         | `Weekly check-in` + `Process my backlog`                                         |
 
-**End of day:** `"Mark [task] as done"`
 
-**Weekly:** `"Process my backlog"` + `"Clean up old tasks"`
+Save specs, notes, and playbooks under `Knowledge/` and link them from tasks. See [examples/workflows/README.md](examples/workflows/README.md) for longer workflow write-ups.
 
-## Features
+---
 
-- Goal-driven prioritization based on your vision
-- Smart deduplication detects duplicate tasks
-- Natural language - just talk to your AI
-- Session evals to review and learn from AI interactions
-- 2-minute setup, no Python required
-- MCP integration for Claude and other AI assistants
+## Optional Capabilities
 
-## For Contributors
+### MCP server
 
-The `core/` directory contains the reusable system. Contributions should:
-- Not include personal information
-- Be generic and configurable
-- Include documentation
-- Follow the existing patterns
+For structured task tools (`list_tasks`, `create_task`, `process_backlog_with_dedup`, `get_task_summary`, and more), run the MCP server described in [core/README.md](core/README.md):
+
+- Python 3.10+
+- Dependencies in [core/requirements.txt](core/requirements.txt)
+- Entry point: [core/mcp/server.py](core/mcp/server.py)
+
+Markdown-only workflows in Cursor or Claude Code do not require MCP.
+
+### Integrations
+
+Optional extensions live under [core/integrations/](core/integrations/):
+
+
+| Integration                                           | Setup prompt                 |
+| ----------------------------------------------------- | ---------------------------- |
+| [Granola](core/integrations/granola/) (meeting notes) | `Set up Granola integration` |
+
+
+See [core/integrations/README.md](core/integrations/README.md) for details.
+
+### Skill packs
+
+[setup.sh](setup.sh) can clone [amans-skills](https://github.com/amanaiproduct/amans-skills) (Excalidraw, design-for-agents, and more). Install manually anytime from that repo.
+
+### Custom skills
+
+Project-specific skills can live in `.claude/skills/` and auto-trigger when relevant (see [AGENTS.md](AGENTS.md)).
+
+---
+
+## Learn More
+
+
+| Doc                                        | Contents                                     |
+| ------------------------------------------ | -------------------------------------------- |
+| [examples/README.md](examples/README.md)   | Workflows and tutorials                      |
+| [Knowledge/README.md](Knowledge/README.md) | What belongs in Knowledge                    |
+| [core/README.md](core/README.md)           | MCP tools, configuration, contributor detail |
+
+
+**Upstream:** [github.com/amanaiproduct/personal-os](https://github.com/amanaiproduct/personal-os)
+
+---
+
+## Contributing
+
+The `core/` directory is the reusable system layer. When changing shared behavior:
+
+- Do not commit personal tasks, goals, backlog, or schedule
+- Keep changes generic and documented
+- Follow patterns in existing `core/` code and templates
+
+---
 
 ## License
 
-This work is licensed under CC BY-NC-SA 4.0.
+This work is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
-Copyright © 2025 Aman Khan. You may view, use, modify, and share this repo with attribution for non-commercial purposes. Commercial sale is not permitted, but you may use it internally for work and business.
+**Attribution:** This repository is a fork of PersonalOS. Original work copyright © 2025 Aman Khan ([amanaiproduct/personal-os](https://github.com/amanaiproduct/personal-os)). Fork modifications are offered under the same license.
 
-Full license: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+You may view, use, modify, and share this repo with attribution for non-commercial purposes. Commercial sale of the work is not permitted; internal use for work and business is allowed under the license terms.
+
+Full legal text: [https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode)
