@@ -311,6 +311,25 @@ For each backlog item, ask:
 2. **How urgent/important is this?** → Assign priority based on Goals.md
 3. **What's the specific next action?** → Create actionable task
 
+## Time Estimation Heuristic v1
+
+When `estimated_time` is missing, infer it with this heuristic:
+- Start with a category base:
+  - `admin`: 30
+  - `outreach`: 45
+  - `writing`: 60
+  - `research`: 75
+  - `technical`: 90
+  - `marketing`: 60
+  - `other`: 60
+- Add +15 for ambiguous/exploratory items (brainstorm, figure out, explore, investigate).
+- Add +15 for external dependency signals (wait, approval, reply, meeting, sync, review with).
+- Add +15 for public deliverables (loom, demo, publish, portfolio, linkedin, post).
+- Add +30 for multi-step deliverables (write-up + record + polish style tasks).
+- Round to nearest 15 minutes and clamp to 30-180.
+
+Ask clarifying questions when confidence is low or the scope is unclear.
+
 ## Context Integration
 
 ### Goals.md Reference

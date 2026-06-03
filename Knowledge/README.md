@@ -15,6 +15,7 @@ Store reference documents, research, specs, meeting notes, and any persistent in
 | Research | Market analysis, technical findings |
 | Process docs | How-tos, checklists, runbooks |
 | References | Links, contacts, credentials (encrypted) |
+| PM interview rubrics | `pm-interview-rubrics/` — rubrics, task setup, and score logging (see README there) |
 
 ---
 

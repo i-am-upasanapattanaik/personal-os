@@ -8,6 +8,8 @@ resource_refs:
   - Knowledge/example-brief.md
 ---
 
+<!-- If estimated_time is omitted, MCP Estimation Heuristic v1 infers one. -->
+
 # Example Task
 
 ## Context

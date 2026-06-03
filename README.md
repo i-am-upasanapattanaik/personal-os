@@ -58,12 +58,13 @@ The setup will:
 1. **Brain dump** - Drop notes into `BACKLOG.md` (no structure needed)
 2. **Process** - Say "process my backlog" to your AI
 3. **Get organized** - AI creates prioritized tasks based on your GOALS.md
-4. **Stay focused** - Ask "what should I work on?" for smart suggestions
+4. **Stay focused** - Ask "what should I work on today?" for smart suggestions
 
 ### Common Commands
 
+- `"menu"` or `"help"` - Show numbered list of prompts (nothing runs until you pick)
 - `"Process my backlog"` - Turn notes into tasks
-- `"What should I work on?"` - Get AI suggestions
+- `"What should I work on today?"` - Get AI suggestions (quick focus)
 - `"Show me my P0 tasks"` - See urgent items
 - `"Mark [task] as done"` - Complete work
 

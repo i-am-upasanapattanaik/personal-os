@@ -209,6 +209,51 @@ def guess_category(item: str) -> str:
     else:
         return 'other'
 
+def _round_to_nearest_15(minutes: int) -> int:
+    """Round minutes to the nearest 15-minute increment."""
+    return max(15, int(round(minutes / 15.0) * 15))
+
+def estimate_task_time_minutes(item: str, category: Optional[str] = None) -> int:
+    """
+    Estimate task time using a lightweight heuristic.
+
+    Heuristic:
+    - Start with category-based base time.
+    - Apply keyword modifiers for ambiguity, dependencies, and deliverable complexity.
+    - Round to nearest 15, then clamp to [30, 180].
+    """
+    item_lower = item.lower()
+    resolved_category = category or guess_category(item)
+
+    base_by_category = {
+        'admin': 30,
+        'outreach': 45,
+        'writing': 60,
+        'research': 75,
+        'technical': 90,
+        'marketing': 60,
+        'other': 60,
+    }
+    estimate = base_by_category.get(resolved_category, 60)
+
+    # Ambiguous/exploratory work tends to take longer.
+    if any(term in item_lower for term in ['brainstorm', 'figure out', 'explore', 'investigate', 'discover']):
+        estimate += 15
+
+    # External dependencies often increase coordination time.
+    if any(term in item_lower for term in ['wait', 'approval', 'reply', 'follow up', 'meeting', 'sync', 'review with']):
+        estimate += 15
+
+    # Public-facing artifacts usually include polishing effort.
+    if any(term in item_lower for term in ['loom', 'demo', 'publish', 'portfolio', 'linkedin', 'post']):
+        estimate += 15
+
+    # Multi-step deliverables generally require create + polish cycles.
+    if any(term in item_lower for term in ['write up', 'write-up', 'draft and', 'record and', 'end-to-end']):
+        estimate += 30
+
+    return max(30, min(180, _round_to_nearest_15(estimate)))
+
 def generate_task_content(item: str, category: str) -> str:
     """Generate rich task content based on item and category"""
     
@@ -401,7 +446,7 @@ async def handle_list_tools() -> list[types.Tool]:
                     "title": {"type": "string", "description": "Task title"},
                     "category": {"type": "string", "description": "Task category", "default": "other"},
                     "priority": {"type": "string", "description": "Priority (P0-P3)", "default": "P2"},
-                    "estimated_time": {"type": "integer", "description": "Estimated time in minutes", "default": 30},
+                    "estimated_time": {"type": "integer", "description": "Estimated time in minutes (optional - heuristic is used when omitted)"},
                     "content": {"type": "string", "description": "Task content/description"}
                 },
                 "required": ["title"]
@@ -556,7 +601,9 @@ async def handle_call_tool(
         title = arguments['title']
         category = arguments.get('category', 'other')
         priority = arguments.get('priority', 'P2')
-        estimated_time = arguments.get('estimated_time', 30)
+        estimated_time = arguments.get('estimated_time')
+        if estimated_time is None:
+            estimated_time = estimate_task_time_minutes(title, category)
         content = arguments.get('content', '')
         
         # Create filename
@@ -629,7 +676,7 @@ async def handle_call_tool(
         time_by_priority = {}
         for priority in ['P0', 'P1', 'P2', 'P3']:
             priority_tasks = [t for t in active_tasks if t.get('priority') == priority]
-            total_time = sum(t.get('estimated_time', 30) for t in priority_tasks)
+            total_time = sum(t.get('estimated_time', 60) for t in priority_tasks)
             time_by_priority[priority] = {
                 'total_minutes': total_time,
                 'total_hours': round(total_time / 60, 1)
@@ -856,13 +903,14 @@ async def handle_call_tool(
                     safe_filename = re.sub(r'[^\w\s-]', '', item).strip()
                     safe_filename = re.sub(r'[-\s]+', ' ', safe_filename)
                     task_file = TASKS_DIR / f"{safe_filename}.md"
+                    inferred_category = guess_category(item)
                     
                     metadata = {
                         "title": item,
-                        "category": guess_category(item),
+                        "category": inferred_category,
                         "priority": "P2",
                         "status": "n",
-                        "estimated_time": 60
+                        "estimated_time": estimate_task_time_minutes(item, inferred_category)
                     }
                     
                     yaml_str = yaml.dump(metadata, default_flow_style=False, sort_keys=False)

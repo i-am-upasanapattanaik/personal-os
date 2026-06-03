@@ -11,10 +11,15 @@ BACKLOG.md
 Knowledge/*.md
 !Knowledge/.gitkeep
 !Knowledge/README.md
+Knowledge/pm-interview-rubrics/
 
 # Personal configuration
-CLAUDE.md       # If customized from template
-GOALS.md        # Personal goals
+# If customized from template
+CLAUDE.md
+# Personal goals
+GOALS.md
+# Weekly hours and day-of exceptions
+schedule.md
 
 # Keep templates and examples
 !CLAUDE_TEMPLATE.md

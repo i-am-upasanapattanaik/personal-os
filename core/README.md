@@ -94,6 +94,10 @@ What needs to be done and why.
 | `get_task_summary` | Statistics and overview |
 | `prune_completed_tasks` | Clean old completed tasks |
 
+Time estimation behavior:
+- If `estimated_time` is provided during task creation, that value is used.
+- If omitted, the MCP server applies an Estimation Heuristic v1 based on category and complexity cues, then rounds to 15-minute increments.
+
 ## Configuration
 
 Create `config.yaml` to customize:
